@@ -161,9 +161,12 @@ class ST7789(object):
         self._gpio.setup(led, GPIO.OUT)
         self._gpio.setup(led, GPIO.HIGH)
         # Set SPI to mode 0, MSB first.
-        spi.set_mode(mode)
-        spi.set_bit_order(SPI.MSBFIRST)
-        spi.set_clock_hz(SPI_CLOCK_HZ)
+        # spi.set_mode(mode)
+        # spi.set_bit_order(SPI.MSBFIRST)
+        # spi.set_clock_hz(SPI_CLOCK_HZ)
+        spi.mode = mode
+        spi.lsbfirst = False
+        spi.max_speed_hz = SPI_CLOCK_HZ
         # Create an image buffer.
         self.buffer = Image.new('RGB', (width, height))
 
@@ -181,7 +184,7 @@ class ST7789(object):
         # Write data a chunk at a time.
         for start in range(0, len(data), chunk_size):
             end = min(start+chunk_size, len(data))
-            self._spi.write(data[start:end])
+            self._spi.writebytes(data[start:end])
 
     def command(self, data):
         """Write a byte or array of bytes to the display as command data."""

@@ -3,6 +3,7 @@
 
 import Adafruit_GPIO as GPIO
 import Adafruit_GPIO.SPI as SPI
+import spidev
 
 import ST7789 as TFT
 import datetime
@@ -13,9 +14,9 @@ from PIL import Image, ImageDraw, ImageFont, ImageColor
 import numpy as np
 
 # Raspberry Pi pin configuration:
-RST = 27
-DC  = 25
-LED = 24
+RST = 25
+DC  = 24
+LED = 19
 SPI_PORT = 0
 SPI_DEVICE = 0
 SPI_MODE = 0b11
@@ -34,9 +35,12 @@ def expand2square(pil_img, background_color):
         result.paste(pil_img, ((height - width) // 2, 0))
         return result
 
+# _spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE)
+# _spi=SPI.SpiDev(0, 0, max_speed_hz=SPI_SPEED_HZ)
+_spi = spidev.SpiDev(0, 0)
+_spi.max_speed_hz=SPI_SPEED_HZ
 
-disp = TFT.ST7789(spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=SPI_SPEED_HZ),
-       mode=SPI_MODE, rst=RST, dc=DC, led=LED)
+disp = TFT.ST7789(spi=_spi, mode=SPI_MODE, rst=RST, dc=DC, led=LED)
 
 # Initialize display.
 disp.begin()
